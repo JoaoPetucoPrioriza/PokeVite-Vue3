@@ -10,7 +10,7 @@ let pokemonSelected = reactive(ref());
 let loading = ref(false);
 
 onMounted(() => {
-  fetch('https://pokeapi.co/api/v2/pokemon?limit=201&offset=0')
+  fetch('https://pokeapi.co/api/v2/pokemon?limit=151&offset=0')
     .then(res => res.json())
     .then(res => pokemons.value = res.results);
 })
@@ -83,5 +83,11 @@ const selectPokemon = async (pokemon) => {
   max-height: 75vh;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .card-list{
+    max-height: 50vh;
+}
 }
 </style>
