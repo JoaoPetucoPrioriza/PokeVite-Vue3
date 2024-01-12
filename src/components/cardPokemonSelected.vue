@@ -1,11 +1,35 @@
 <script setup>
-const pokemon = defineProps(["name", "xp", "height", "img", "loading"])
+const pokemon = defineProps(["name", "xp", "height", "img", "loading", "types"]);
 import 'animate.css';
 
+const typeColors = {
+  normal: 'rgba(150,118,19,0.6)',
+  bug: 'rgba(151,255,0,0.6)',
+  water: 'rgba(0,172,255,0.6)',
+  fire: 'rgba(255,0,0,0.75)',
+  grass: 'rgba(0,255,115,0.6)',
+  poison: 'rgba(115,0,255,0.6)',
+  electric: 'rgba(241,255,0,0.6)',
+  ground: 'rgba(163,62,23,0.6)',
+  fairy: 'rgba(209,0,255,0.75)',
+  fighting: 'rgba(73,55,39,0.6)',
+  psychic: 'rgba(48,25,119,0.6)',
+  rock: 'rgba(148,137,137,0.7)',
+  ghost: 'rgba(205,186,232,0.55)',
+  ice: 'rgba(25,125,185,0.55)',
+  dragon: 'rgba(252,76,0,0.52)',
+};
+
+const getTypeColor = () => {
+  const type = pokemon.types && pokemon.types.length > 0 ? pokemon.types[0].type.name : 'default';
+  return typeColors[type] || ''; 
+};
+console.log("Tipo do Pokémon:", pokemon.types);
 </script>
 
 <template>
-    <div class="card cardPokemonSelected" :class="loading ? '' : 'animate__animated animate__flipInY'">
+    <div class="card cardPokemonSelected" :class="loading ? '' : 'animate__animated animate__flipInY'"
+        :style="{ backgroundColor: getTypeColor(pokemon.types) }">
 
         <img v-if="pokemon.name" :src="pokemon.img" class="card-img-top pt-2" :alt="pokemon.name">
 
@@ -47,8 +71,8 @@ import 'animate.css';
 <style scoped>
 .cardPokemonSelected {
     height: 75vh;
-    background: rgb(143, 129, 51);
-    background: radial-gradient(circle, rgba(190, 163, 26, 0.804) 0%, rgba(255, 42, 0, 0.921) 100%);
+    overflow: hidden;
+    transition: background-color 0.3s ease;
 }
 
 .cardPokemonSelected img {
