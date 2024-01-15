@@ -28,7 +28,7 @@ console.log(pokemon)
     <div class="col-4 col-md-6 col-xl-4">
 
         <div 
-        class="card p-2 mb-3" 
+        class="card p-2 mb-3 cardListPokemon" 
         :style="{ backgroundColor: getTypeColor(pokemon.types)}" >
             <p class="text-center">{{ pokemon.name }}</p>
             <img :src="urlBaseSvg" class="card-img-top" alt="..." height="80" />
