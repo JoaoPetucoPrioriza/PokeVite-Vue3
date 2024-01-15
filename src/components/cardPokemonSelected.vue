@@ -3,7 +3,7 @@ const pokemon = defineProps(["name", "xp", "height", "img", "loading", "types"])
 import 'animate.css';
 
 const typeColors = {
-  normal: 'rgba(150,118,19,0.6)',
+  normal: 'rgba(150,118,19,0.6)', 
   bug: 'rgba(151,255,0,0.6)',
   water: 'rgba(0,172,255,0.6)',
   fire: 'rgba(255,0,0,0.75)',
@@ -19,17 +19,16 @@ const typeColors = {
   ice: 'rgba(25,125,185,0.55)',
   dragon: 'rgba(252,76,0,0.52)',
 };
-
 const getTypeColor = () => {
   const type = pokemon.types && pokemon.types.length > 0 ? pokemon.types[0].type.name : 'default';
   return typeColors[type] || ''; 
 };
-console.log("Tipo do Pokémon:", pokemon.types);
+console.log(pokemon, " Selecionado");
 </script>
 
 <template>
-    <div class="card cardPokemonSelected" :class="loading ? '' : 'animate__animated animate__flipInY'"
-        :style="{ backgroundColor: getTypeColor(pokemon.types) }">
+    <div class="card cardPokemonSelected" :class="loading ? '' : 'animate__animated animate__zoomIn'"
+        :style="{ backgroundColor: getTypeColor(pokemon.types)}">
 
         <img v-if="pokemon.name" :src="pokemon.img" class="card-img-top pt-2" :alt="pokemon.name">
 
@@ -50,20 +49,11 @@ console.log("Tipo do Pokémon:", pokemon.types);
                     <strong>Altura:</strong>
                     <span>{{ pokemon.height }}</span>
                 </section>
+                <section class="col">
+                    <strong>Classe:</strong>
+                    <span>{{ pokemon.types && pokemon.types.length > 0 ? pokemon.types[0].type.name : '???'}}</span>
+                </section>
             </div>
-
-            <!-- <div class="d-none d-md-block">
-                <div class="row mt-4">
-                    <section class="col">
-                        <strong>XP:</strong>
-                        <span>{{ pokemon.xp }}</span>
-                    </section>
-                    <section class="col">
-                        <strong>Altura:</strong>
-                        <span>{{ pokemon.height }}</span>
-                    </section>
-                </div>
-            </div> -->
         </div>
     </div>
 </template>

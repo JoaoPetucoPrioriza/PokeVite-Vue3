@@ -48,7 +48,7 @@ const selectPokemon = async (pokemon) => {
           :height="pokemonSelected?.height" 
           :img="pokemonSelected?.sprites.other.dream_world.front_default" 
           :loading="loading"
-          :types="pokemonSelected?.types || []"
+          :types="pokemonSelected?.types"
           />
           
 
@@ -68,8 +68,12 @@ const selectPokemon = async (pokemon) => {
 
               </div>
 
-              <ListPokemons v-for="pokemon in pokemonsFiltered" :key="pokemon.name" :name="pokemon.name"
-                :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'" @click="selectPokemon(pokemon)" />
+              <ListPokemons v-for="pokemon in pokemonsFiltered" 
+              :key="pokemon.name" 
+              :name="pokemon.name"
+              :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'" @click="selectPokemon(pokemon)" 
+              :types="pokemon.types"
+              />
 
             </div>
 
