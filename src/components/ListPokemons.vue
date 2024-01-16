@@ -21,7 +21,7 @@ const getTypeColor = () => {
   const type = pokemon.types && pokemon.types.length > 0 ? pokemon.types[0].type.name : 'default';
   return typeColors[type] || ''; 
 };
-console.log(pokemon)
+
 </script>
 
 <template>

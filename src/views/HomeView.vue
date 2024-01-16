@@ -3,6 +3,7 @@ import { onMounted, reactive, ref, computed } from 'vue';
 import ListPokemons from '@/components/ListPokemons.vue';
 import cardPokemonSelected from '@/components/cardPokemonSelected.vue';
 
+
 let pokemons = reactive(ref());
 let urlBaseSvg = ref("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/");
 let searchPokemonField = ref("");
@@ -26,12 +27,62 @@ const pokemonsFiltered = computed(() => {
 
 const selectPokemon = async (pokemon) => {
   loading.value = true;
-  await fetch(pokemon.url)
-    .then(res => res.json())
-    .then(res => pokemonSelected.value = res)
-    .catch(err => alert(err))
-    .finally( ()=> loading.value = false)
-}
+  try {
+    const response = await fetch(pokemon.url);
+    const data = await response.json();
+    console.log('Data do Pokémon:', data);
+
+    pokemonSelected.value = {
+      name: data.name,
+      base_experience: data.base_experience,
+      height: data.height,
+      sprites: data.sprites,
+      types: data.types,
+    };
+
+    // Adição das informações de evolução
+    const speciesResponse = await fetch(data.species.url);
+    const speciesData = await speciesResponse.json();
+    console.log('Data da Espécie:', speciesData);
+
+    const evolutionChainUrl = speciesData.evolution_chain.url;
+    console.log('URL da Cadeia de Evolução:', evolutionChainUrl);
+
+    const evolutionChainResponse = await fetch(evolutionChainUrl);
+    const evolutionChainData = await evolutionChainResponse.json();
+    console.log('Data da Cadeia de Evolução:', evolutionChainData);
+
+    const evolutions = parseEvolutions(evolutionChainData.chain);
+    console.log('Evoluções:', evolutions);
+
+    pokemonSelected.value.evolutions = evolutions;
+
+  } catch (error) {
+    console.error(error);
+    alert(error.message || 'Erro ao carregar o Pokémon.');
+  } finally {
+    loading.value = false;
+  }
+};
+const parseEvolutions = (chain) => {
+  const evolutions = [];
+
+  const addEvolutionsRecursive = (stage) => {
+    evolutions.push({ name: stage.species.name });
+
+    if (stage.evolves_to.length > 0) {
+      stage.evolves_to.forEach((evolution) => {
+        addEvolutionsRecursive(evolution);
+      });
+    }
+  };
+
+  if (chain && chain.species) {
+    addEvolutionsRecursive(chain);
+  }
+
+  return evolutions.slice(1); // Remove o primeiro elemento, que é o próprio Pokémon inicial
+};
 </script>
 
 <template>
@@ -49,9 +100,8 @@ const selectPokemon = async (pokemon) => {
           :img="pokemonSelected?.sprites.other.dream_world.front_default" 
           :loading="loading"
           :types="pokemonSelected?.types"
+          :evolutions="pokemonSelected?.evolutions"
           />
-          
-
         </div>
 
         <div class="col-sm-12 col-md-6">
