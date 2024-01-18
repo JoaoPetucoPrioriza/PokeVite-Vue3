@@ -37,7 +37,6 @@ const getTypeColor = () => {
         <img v-else src="../assets/egg_pokemon.svg" class="card-img-top pt-2" alt="Pokemon Egg">
 
 
-
         <div class="card-body">
             <h5 class="card-title text-center fw-bold">{{ pokemon.name || '???' }}</h5>
             <hr>
@@ -73,10 +72,6 @@ const getTypeColor = () => {
                 </div>
             </div>
         </div>
-
-
-
-
     </div>
 </template>
 

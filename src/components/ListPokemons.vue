@@ -1,25 +1,35 @@
 <script setup>
 const pokemon = defineProps(["name", "urlBaseSvg", "types"]);
 const typeColors = {
-  normal: 'rgba(150,118,19,0.6)', 
-  bug: 'rgba(151,255,0,0.6)',
-  water: 'rgba(0,172,255,0.6)',
-  fire: 'rgba(255,0,0,0.75)',
-  grass: 'rgba(0,255,115,0.6)',
-  poison: 'rgba(115,0,255,0.6)',
-  electric: 'rgba(241,255,0,0.6)',
-  ground: 'rgba(163,62,23,0.6)',
-  fairy: 'rgba(209,0,255,0.75)',
-  fighting: 'rgba(73,55,39,0.6)',
-  psychic: 'rgba(48,25,119,0.6)',
-  rock: 'rgba(148,137,137,0.7)',
-  ghost: 'rgba(205,186,232,0.55)',
-  ice: 'rgba(25,125,185,0.55)',
-  dragon: 'rgba(252,76,0,0.52)',
+    normal: 'rgba(189,183,107,0.7)', // Cáqui escuro
+    bug: 'rgba(173,255,47,0.6)', // Verde amarelado
+    water: 'rgba(135,206,250,0.6)', // Azul céu
+    fire: 'rgba(255,69,0,0.7)', // Laranja avermelhado
+    grass: 'rgba(34,139,34,0.6)', // Verde grama
+    poison: 'rgba(186,85,211,0.6)', // Roxo orquidea
+    electric: 'rgba(255,255,51,0.7)', // Amarelo claro 4
+    ground: 'rgba(160,82,45,0.7)', // Siena 
+    fairy: 'rgba(255,105,180,0.75)', // HotPink
+    fighting: 'rgba(72,61,139,0.8)', // Azul Ardósia Escuro
+    psychic: 'rgba(138,43,226,0.7)', // Violeta Azul
+    rock: 'rgba(192,192,192,0.7)', // Silver
+    ghost: 'rgba(216,191,216,0.55)', // Cardo
+    ice: 'rgba(240,248,255,0.45)', // Alice Blue
+    dragon: 'rgba(255,99,71,0.7)', // Tomato
 };
+
 const getTypeColor = () => {
-  const type = pokemon.types && pokemon.types.length > 0 ? pokemon.types[0].type.name : 'default';
-  return typeColors[type] || ''; 
+  console.log('Tipos do Pokémon em ListPokemons:', pokemon.types); // Adicione este log
+  const pokemonTypes = pokemon.types || [];
+
+  if (pokemonTypes.length > 0) {
+    const type = pokemonTypes[0].type.name.toLowerCase();
+    console.log(`Tipo do Pokémon: ${type}`);
+    return typeColors[type] || 'White';
+  }
+
+  console.log('Tipo do Pokémon não encontrado em ListPokemons. Tipos:', pokemonTypes);
+  return 'black'; 
 };
 
 </script>
@@ -29,7 +39,7 @@ const getTypeColor = () => {
 
         <div 
         class="card p-2 mb-3 cardListPokemon" 
-        :style="{ backgroundColor: getTypeColor(pokemon.types)}" >
+        :style="{ backgroundColor: getTypeColor() }" >
             <p class="text-center">{{ pokemon.name }}</p>
             <img :src="urlBaseSvg" class="card-img-top" alt="..." height="80" />
         </div>
@@ -39,8 +49,7 @@ const getTypeColor = () => {
 
 <style scoped>
 .cardListPokemon {
-    background: rgb(72, 63, 251);
-    background: radial-gradient(circle, rgba(72, 63, 251, 0.6) 0%, rgba(70, 252, 244, 0.2) 100%);
+   
     cursor: pointer;
 }
 .cardListPokemon:hover {

@@ -3,6 +3,7 @@ import { onMounted, reactive, ref, computed } from 'vue';
 import ListPokemons from '@/components/ListPokemons.vue';
 import cardPokemonSelected from '@/components/cardPokemonSelected.vue';
 
+const pokemonList = ref([]);
 
 let pokemons = reactive(ref());
 let urlBaseSvg = ref("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/");
@@ -13,8 +14,23 @@ let loading = ref(false);
 onMounted(() => {
   fetch('https://pokeapi.co/api/v2/pokemon?limit=151&offset=0')
     .then(res => res.json())
-    .then(res => pokemons.value = res.results);
-})
+    .then(async (res) => {  pokemons.value = res.results;
+      const pokemonDetailsPromises = res.results.map(async (pokemon) => {
+        const response = await fetch(pokemon.url);
+        const data = await response.json();
+        console.log('Data do Pokémon lista:', data);
+        console.log('Tipos do Pokémon:', data.types);
+        return {
+          name: data.name,
+          urlBaseSvg: data.sprites.front_default,
+          types: data.types,
+        };
+      });
+
+      pokemonList.value = await Promise.all(pokemonDetailsPromises);
+    })
+    .catch(error => console.error('Error fetching Pokémon list:', error));
+});
 
 const pokemonsFiltered = computed(() => {
   if (pokemons.value && searchPokemonField.value) {
@@ -23,15 +39,13 @@ const pokemonsFiltered = computed(() => {
     )
   }
   return pokemons.value;
-})
+});
 
 const selectPokemon = async (pokemon) => {
   loading.value = true;
   try {
     const response = await fetch(pokemon.url);
     const data = await response.json();
-    console.log('Data do Pokémon:', data);
-
     pokemonSelected.value = {
       name: data.name,
       base_experience: data.base_experience,
@@ -40,20 +54,16 @@ const selectPokemon = async (pokemon) => {
       types: data.types,
     };
 
-    // Adição das informações de evolução
+
     const speciesResponse = await fetch(data.species.url);
     const speciesData = await speciesResponse.json();
-    console.log('Data da Espécie:', speciesData);
 
     const evolutionChainUrl = speciesData.evolution_chain.url;
-    console.log('URL da Cadeia de Evolução:', evolutionChainUrl);
 
     const evolutionChainResponse = await fetch(evolutionChainUrl);
     const evolutionChainData = await evolutionChainResponse.json();
-    console.log('Data da Cadeia de Evolução:', evolutionChainData);
 
     const evolutions = parseEvolutions(evolutionChainData.chain);
-    console.log('Evoluções:', evolutions);
 
     pokemonSelected.value.evolutions = evolutions;
 
@@ -81,7 +91,7 @@ const parseEvolutions = (chain) => {
     addEvolutionsRecursive(chain);
   }
 
-  return evolutions.slice(1); // Remove o primeiro elemento, que é o próprio Pokémon inicial
+  return evolutions.slice(1);
 };
 </script>
 
@@ -121,8 +131,9 @@ const parseEvolutions = (chain) => {
               <ListPokemons v-for="pokemon in pokemonsFiltered" 
               :key="pokemon.name" 
               :name="pokemon.name"
-              :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'" @click="selectPokemon(pokemon)" 
-              :types="pokemon.types"
+              :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'" 
+              @click="selectPokemon(pokemon)" 
+              :types="pokemonSelected?.types || []"
               />
 
             </div>
